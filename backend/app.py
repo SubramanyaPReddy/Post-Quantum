@@ -1,0 +1,37 @@
+# backend/app.py
+
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+from backend.database import init_database
+from backend.config import NIST_ALGORITHMS
+
+# Import route blueprints
+from backend.routes.keys import bp as keys_bp
+from backend.routes.results import bp as results_bp
+from backend.routes.verification import bp as verification_bp
+from backend.routes.multiencrypt import bp as multiencrypt_bp
+from backend.routes.multisign import bp as multisign_bp
+
+app = Flask(__name__)
+CORS(app)
+
+# Register all API route blueprints
+app.register_blueprint(keys_bp)
+app.register_blueprint(results_bp)
+app.register_blueprint(verification_bp)
+app.register_blueprint(multiencrypt_bp)
+app.register_blueprint(multisign_bp)
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        "status": "healthy",
+        "database": "connected",
+        "nist_standards": NIST_ALGORITHMS
+    })
+
+if __name__ == '__main__':
+    init_database()
+    print("🔐 Flask NIST Crypto Backend Running at http://localhost:5000")
+    app.run(debug=True, port=5000)
