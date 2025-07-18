@@ -2,7 +2,7 @@
 
 from flask import Flask, jsonify
 from flask_cors import CORS
-
+import os
 from backend.database import init_database
 from backend.config import NIST_ALGORITHMS
 
@@ -34,4 +34,5 @@ def health():
 if __name__ == '__main__':
     init_database()
     print("🔐 Flask NIST Crypto Backend Running at http://localhost:5000")
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
