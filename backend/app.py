@@ -3,6 +3,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 import os
+
 from backend.database import init_database
 from backend.config import NIST_ALGORITHMS
 
@@ -23,7 +24,13 @@ app.register_blueprint(verification_bp)
 app.register_blueprint(multiencrypt_bp)
 app.register_blueprint(multisign_bp)
 
-@app.route('/health', methods=['GET'])
+# Health check root route for Render
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "✅ Post-Quantum Crypto Backend is running!"})
+
+# Detailed health endpoint
+@app.route("/health", methods=["GET"])
 def health():
     return jsonify({
         "status": "healthy",
@@ -33,6 +40,5 @@ def health():
 
 if __name__ == '__main__':
     init_database()
-    print("🔐 Flask NIST Crypto Backend Running at http://localhost:5000")
+    print("🔐 Flask NIST Crypto Backend Running on 0.0.0.0:", os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-
